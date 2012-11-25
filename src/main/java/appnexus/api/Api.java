@@ -44,7 +44,7 @@ public class Api {
   }
 
   private <T extends Response> T doGet(String apiPath, Class<T> clazz) {
-    T response = fromJson(apiPath, clazz);
+    T response = fromJson(httpClient.get(apiPath, headers()), clazz);
     try {
       checkResponseStatus(response);
     } catch (AppnexusAuthException e) {

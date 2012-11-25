@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import appnexus.api.Member;
+
 public class AppnexusTest {
   
   private static final String USERNAME = System.getProperty("appnexus.username");
@@ -23,6 +25,13 @@ public class AppnexusTest {
   @Test
   public void testAccessTokenHasBeenSet() {
     assertNotNull(Appnexus.accountDetails.getAccessToken());
+  }
+  
+  @Test
+  public void testGetMember() {
+    Member member = Appnexus.api.getMember();
+    assertNotNull(member.getId());
+    assertNotNull(member.getName());
   }
 
 }

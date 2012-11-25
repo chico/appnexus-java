@@ -42,4 +42,13 @@ public class ApiUnitTest {
     verify(mockHttpClient, times(1)).post(url, null, authJsonPayload);
   }
   
+  @Test
+  public void testGetMember() {
+    when(mockHttpClient.get(Api.ApiPath.MEMBER, api.headers())).thenReturn(Fixtures.MEMBER_RESPONSE);
+    
+    assertEquals(Fixtures.MEMBER, api.getMember());
+    
+    verify(mockHttpClient, times(1)).get(Api.ApiPath.MEMBER, api.headers());
+  }
+  
 }
