@@ -9,9 +9,9 @@
   <description>Appnexus Java Client Library</description>
 
   <scm>
-    <url>https://github.com/appnexus/appnexus-java</url>
-    <connection>scm:git:git://github.com/appnexus/appnexus-java.git</connection>
-    <developerConnection>scm:git:git@github.com:appnexus/appnexus-java.git</developerConnection>
+    <url>https://github.com/chico/appnexus-java</url>
+    <connection>scm:git:git://github.com/chico/appnexus-java.git</connection>
+    <developerConnection>scm:git:git@github.com:chico/appnexus-java.git</developerConnection>
   </scm>
   
   <build>
