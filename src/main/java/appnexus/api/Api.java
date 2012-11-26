@@ -18,7 +18,8 @@ public class Api {
   public interface ApiPath {
     public static final String BASE = Appnexus.getApiBase();  
     public static final String AUTH = format("%s/auth", BASE);
-    public static final String MEMBER = format("%s/member", BASE);    
+    public static final String MEMBER = format("%s/member", BASE);
+    public static final String ADVERTISER = format("%s/advertiser", BASE);
   }
   
   protected HttpClient httpClient = HttpClient.DEFAULT;
@@ -28,21 +29,29 @@ public class Api {
   protected static final String JSON_RESPONSE_ROOT = "response";
   
   protected static final String AUTH_JSON_PAYLOAD = "{\"auth\": {\"username\" : \"%s\", \"password\" : \"%s\"}}";
+  
+  protected static final String ADD_ADVERTISER_JSON_PAYLOAD = "{\"advertiser\":{\"name\":\"%s\", \"state\":\"%s\"}}";
 
   public Api(AccountDetails accountDetails) {
     this.accountDetails = accountDetails;
   }
   
   public void auth() {
-    String authJsonPayload = format(AUTH_JSON_PAYLOAD, accountDetails.getUsername(), accountDetails.getPassword());
-    String token = doPost(ApiPath.AUTH, null, AuthResponse.class, authJsonPayload).getToken();
+    String payload = format(AUTH_JSON_PAYLOAD, accountDetails.getUsername(), accountDetails.getPassword());
+    String token = doPost(ApiPath.AUTH, null, AuthResponse.class, payload).getToken();
     this.accountDetails.setAccessToken(token);
   }
   
   public Member getMember() {
     return doGet(ApiPath.MEMBER, MemberResponse.class).getMember();
   }
-
+  
+  public void addAdvertiser(Advertiser advertiser) {
+    String payload = format(ADD_ADVERTISER_JSON_PAYLOAD, advertiser.getName(), advertiser.getState());
+    String id = doPost(ApiPath.ADVERTISER, IdResponse.class, payload).getId();
+    advertiser.setId(id);
+  }
+  
   private <T extends Response> T doGet(String apiPath, Class<T> clazz) {
     T response = fromJson(httpClient.get(apiPath, headers()), clazz);
     try {
