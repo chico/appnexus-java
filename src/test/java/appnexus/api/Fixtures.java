@@ -28,6 +28,6 @@ public interface Fixtures {
   
   public final static Member MEMBER = new Member.Builder().name("HulkMedia").id("2182").build();
   
-  public final static Advertiser ADVERTISER = new Advertiser.Builder().name("HulkMedia").state("active").id("1234").build();
+  public final static Advertiser ADVERTISER = new Advertiser.Builder().name("HulkMedia").state(Advertiser.State.ACTIVE).id("1234").build();
 
 }

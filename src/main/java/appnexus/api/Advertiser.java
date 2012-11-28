@@ -8,6 +8,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class Advertiser implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  
+  public interface State {
+    public final static String ACTIVE = "active";
+  }
 
   private String id;
   

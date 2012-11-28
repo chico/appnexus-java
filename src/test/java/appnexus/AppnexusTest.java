@@ -1,11 +1,14 @@
 package appnexus;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import appnexus.api.Advertiser;
 import appnexus.api.Member;
 
 public class AppnexusTest {
@@ -32,6 +35,15 @@ public class AppnexusTest {
     Member member = Appnexus.api.getMember();
     assertNotNull(member.getId());
     assertNotNull(member.getName());
+  }
+  
+  @Test
+  @Ignore
+  public void testAddAdvertiser() {    
+    Advertiser advertiser = new Advertiser.Builder().name("test").state(Advertiser.State.ACTIVE).build();
+    Appnexus.api.addAdvertiser(advertiser);
+    assertNotNull(advertiser.getId());
+    System.out.println(format("Advertiser created (id: %s)", advertiser.getId()));
   }
 
 }
