@@ -10,10 +10,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import appnexus.api.Advertiser;
-import appnexus.api.Campaign;
-import appnexus.api.LineItem;
-import appnexus.api.Member;
+import appnexus.model.Advertiser;
+import appnexus.model.Campaign;
+import appnexus.model.LineItem;
+import appnexus.model.Member;
 
 public class AppnexusTest {
   

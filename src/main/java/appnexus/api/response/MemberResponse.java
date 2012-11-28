@@ -1,4 +1,6 @@
-package appnexus.api;
+package appnexus.api.response;
+
+import appnexus.model.Member;
 
 
 public class MemberResponse extends Response {

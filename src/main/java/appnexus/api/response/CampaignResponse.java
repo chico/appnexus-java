@@ -1,4 +1,6 @@
-package appnexus.api;
+package appnexus.api.response;
+
+import appnexus.model.Campaign;
 
 public class CampaignResponse extends Response {
 

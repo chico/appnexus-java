@@ -1,4 +1,4 @@
-package appnexus.api;
+package appnexus.model;
 
 import static java.lang.String.format;
 

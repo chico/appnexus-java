@@ -1,4 +1,4 @@
-package appnexus.api;
+package appnexus.api.response;
 
 public class IdResponse extends Response {
 

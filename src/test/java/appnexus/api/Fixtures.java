@@ -1,5 +1,10 @@
 package appnexus.api;
 
+import appnexus.model.Advertiser;
+import appnexus.model.Campaign;
+import appnexus.model.LineItem;
+import appnexus.model.Member;
+
 public interface Fixtures {
   
   public final static String DUMMY_TOKEN = "fiuho88jtuu5qef9ofmglbmcn7";

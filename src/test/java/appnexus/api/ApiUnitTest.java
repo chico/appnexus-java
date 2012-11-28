@@ -7,33 +7,40 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import appnexus.AccountDetails;
-import appnexus.api.Api.ApiPath;
 import appnexus.http.HttpClient;
+import appnexus.model.Advertiser;
+import appnexus.model.Campaign;
+import appnexus.model.LineItem;
 
 public class ApiUnitTest {
   
   private AccountDetails accountDetails = new AccountDetails.Builder()
     .username("username").password("password").accessToken(Fixtures.DUMMY_TOKEN).build();
   
-  private Api api = new Api(accountDetails);
+  private Api api;
+  
+  private Map<String, String> authHeaders;
   
   @Mock private HttpClient mockHttpClient;
   
   @Before
   public void setUp() {    
     initMocks(this);
-    api.setHttpClient(mockHttpClient);
+    this.api = new Api(mockHttpClient, accountDetails);
+    this.authHeaders = api.helper.headers();
   }
   
   @Test
   public void testAuth() {
-    String url = Api.ApiPath.AUTH;
-    String payload = format(Api.AUTH_JSON_PAYLOAD, accountDetails.getUsername(), accountDetails.getPassword());
+    String url = ApiPath.AUTH;
+    String payload = format(ApiHelper.AUTH_JSON_PAYLOAD, accountDetails.getUsername(), accountDetails.getPassword());
     when(mockHttpClient.post(url, null, payload)).thenReturn(Fixtures.AUTH_RESPONSE);
     
     api.accountDetails.setAccessToken(null);
@@ -44,32 +51,32 @@ public class ApiUnitTest {
   }
   
   @Test
-  public void testGetMember() {
-    when(mockHttpClient.get(Api.ApiPath.MEMBER, api.headers())).thenReturn(Fixtures.MEMBER_RESPONSE);
+  public void testGetMember() {    
+    when(mockHttpClient.get(ApiPath.MEMBER, authHeaders)).thenReturn(Fixtures.MEMBER_RESPONSE);
     
     assertEquals(Fixtures.MEMBER, api.getMember());
     
-    verify(mockHttpClient, times(1)).get(Api.ApiPath.MEMBER, api.headers());
+    verify(mockHttpClient, times(1)).get(ApiPath.MEMBER, authHeaders);
   }
   
   @Test
   public void testAddAdvertiser() {
-    String url = Api.ApiPath.ADVERTISER;
+    String url = ApiPath.ADVERTISER;
     String payload = Fixtures.ADVERTISER.getAddAdvertiserJsonPayload();
-    when(mockHttpClient.post(url, api.headers(), payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.ADVERTISER.getId()));
+    when(mockHttpClient.post(url, authHeaders, payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.ADVERTISER.getId()));
     
     Advertiser advertiser = new Advertiser.Builder().name(Fixtures.ADVERTISER.getName()).state(Fixtures.ADVERTISER.getState()).build();
     api.addAdvertiser(advertiser);
     assertEquals(Fixtures.ADVERTISER, advertiser);
     
-    verify(mockHttpClient, times(1)).post(url, api.headers(), payload);
+    verify(mockHttpClient, times(1)).post(url, authHeaders, payload);
   }
   
   @Test
   public void testAddLineItem() {
     String url = format(ApiPath.LINE_ITEM_ADD, Fixtures.LINE_ITEM.getAdvertiserId());
     String payload = Fixtures.LINE_ITEM.getAddLineItemJsonPayload();
-    when(mockHttpClient.post(url, api.headers(), payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.LINE_ITEM.getId()));
+    when(mockHttpClient.post(url, authHeaders, payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.LINE_ITEM.getId()));
     
     LineItem lineItem = new LineItem.Builder()
       .name(Fixtures.LINE_ITEM.getName())
@@ -80,14 +87,14 @@ public class ApiUnitTest {
     api.addLineItem(lineItem);
     assertEquals(Fixtures.LINE_ITEM, lineItem);
     
-    verify(mockHttpClient, times(1)).post(url, api.headers(), payload);
+    verify(mockHttpClient, times(1)).post(url, authHeaders, payload);
   }
   
   @Test
   public void testAddCampaign() {
     String url = format(ApiPath.CAMPAIGN_ADD, Fixtures.CAMPAIGN.getAdvertiserId());
     String payload = Fixtures.CAMPAIGN.getAddCampaignJsonPayload();
-    when(mockHttpClient.post(url, api.headers(), payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.CAMPAIGN.getId()));
+    when(mockHttpClient.post(url, authHeaders, payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.CAMPAIGN.getId()));
     
     Campaign campaign = new Campaign.Builder()
       .name(Fixtures.CAMPAIGN.getName())
@@ -98,17 +105,17 @@ public class ApiUnitTest {
     api.addCampaign(campaign);
     assertEquals(Fixtures.CAMPAIGN, campaign);
     
-    verify(mockHttpClient, times(1)).post(url, api.headers(), payload);
+    verify(mockHttpClient, times(1)).post(url, authHeaders, payload);
   }
   
   @Test
   public void testGetCampaign() {
     String url = format(ApiPath.CAMPAIGN_GET, Fixtures.CAMPAIGN.getId(), Fixtures.CAMPAIGN.getAdvertiserId());
-    when(mockHttpClient.get(url, api.headers())).thenReturn(Fixtures.CAMPAIGN_RESPONSE);
+    when(mockHttpClient.get(url, authHeaders)).thenReturn(Fixtures.CAMPAIGN_RESPONSE);
     
     assertEquals(Fixtures.CAMPAIGN, api.getCampaign(Fixtures.CAMPAIGN.getId(), Fixtures.CAMPAIGN.getAdvertiserId()));
     
-    verify(mockHttpClient, times(1)).get(url, api.headers());
+    verify(mockHttpClient, times(1)).get(url, authHeaders);
   }
   
 }
