@@ -78,10 +78,12 @@
 		<artifactId>gson</artifactId>
 		<version>2.1</version>
     </dependency>
+    
+    <!-- Play 2.0.3 only supports guava 10.0.1 - See https://github.com/playframework/Play20/pull/262 -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>13.0.1</version>
+      <version>10.0.1</version>
     </dependency>
     
     <dependency>
