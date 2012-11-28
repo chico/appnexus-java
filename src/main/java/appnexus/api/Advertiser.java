@@ -1,5 +1,7 @@
 package appnexus.api;
 
+import static java.lang.String.format;
+
 import java.io.Serializable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -9,21 +11,24 @@ public class Advertiser implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
+  protected static final String ADD_ADVERTISER_JSON_PAYLOAD = "{\"advertiser\":{\"name\":\"%s\", \"state\":\"%s\"}}";
+  
   public interface State {
     public final static String ACTIVE = "active";
+    public final static String INACTIVE = "inactive";
   }
 
-  private String id;
+  private Integer id;
   
   private String name;
   
   private String state;
   
-  public String getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Integer id) {
     this.id = id;
   }
   
@@ -42,6 +47,11 @@ public class Advertiser implements Serializable {
   public void setState(String state) {
     this.state = state;
   }
+  
+  public String getAddAdvertiserJsonPayload() {
+    // TODO use gson
+    return format(ADD_ADVERTISER_JSON_PAYLOAD, this.getName(), this.getState());
+  }
 
   @Override
   public boolean equals(Object obj) {
@@ -55,13 +65,13 @@ public class Advertiser implements Serializable {
   
   public static class Builder {
 
-    private String id;
+    private Integer id;
     
     private String name;
     
     private String state;
     
-    public Builder id(String id) {
+    public Builder id(Integer id) {
       this.id = id;
       return this;
     }

@@ -1,5 +1,6 @@
 package appnexus;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import appnexus.api.Api;
 
 /**
@@ -32,6 +33,9 @@ public class Appnexus {
   }
   
   public static void init(String username, String password) {
+    if (isBlank(username) || isBlank(password)) {
+      throw new IllegalArgumentException("Please set the appnexus username and password");
+    }
     Appnexus.accountDetails.setUsername(username);
     Appnexus.accountDetails.setPassword(password);
     api.auth();

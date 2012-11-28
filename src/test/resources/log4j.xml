@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd MM HH:mm:ss} [%t] %-5p %c %M %x - %m\n" />
+    </layout>
+    <param name="Encoding" value="UTF-8" />
+  </appender>
+
+  <category name="appnexus" additivity="false">
+    <priority value="info" />
+    <appender-ref ref="console" />
+  </category>
+
+  <root>
+    <priority value="warn" />
+    <appender-ref ref="console" />
+  </root>
+
+</log4j:configuration>

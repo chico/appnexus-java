@@ -17,9 +17,19 @@ public class Api {
   
   public interface ApiPath {
     public static final String BASE = Appnexus.getApiBase();  
+    
     public static final String AUTH = format("%s/auth", BASE);
+    
     public static final String MEMBER = format("%s/member", BASE);
+    
     public static final String ADVERTISER = format("%s/advertiser", BASE);
+    
+    public static final String LINE_ITEM = format("%s/line-item", BASE);
+    public static final String LINE_ITEM_ADD = LINE_ITEM + "?advertiser_id=%d";
+    
+    public static final String CAMPAIGN = format("%s/campaign", BASE);
+    public static final String CAMPAIGN_ADD = CAMPAIGN + "?advertiser_id=%d";
+    public static final String CAMPAIGN_GET = CAMPAIGN + "?id=%s&advertiser_id=%d";
   }
   
   protected HttpClient httpClient = HttpClient.DEFAULT;
@@ -30,8 +40,6 @@ public class Api {
   
   protected static final String AUTH_JSON_PAYLOAD = "{\"auth\": {\"username\" : \"%s\", \"password\" : \"%s\"}}";
   
-  protected static final String ADD_ADVERTISER_JSON_PAYLOAD = "{\"advertiser\":{\"name\":\"%s\", \"state\":\"%s\"}}";
-
   public Api(AccountDetails accountDetails) {
     this.accountDetails = accountDetails;
   }
@@ -47,9 +55,28 @@ public class Api {
   }
   
   public void addAdvertiser(Advertiser advertiser) {
-    String payload = format(ADD_ADVERTISER_JSON_PAYLOAD, advertiser.getName(), advertiser.getState());
-    String id = doPost(ApiPath.ADVERTISER, IdResponse.class, payload).getId();
+    String payload = advertiser.getAddAdvertiserJsonPayload();
+    Integer id = doPost(ApiPath.ADVERTISER, IdResponse.class, payload).getId();
     advertiser.setId(id);
+  }
+  
+  public void addLineItem(LineItem lineItem) {
+    String payload = lineItem.getAddLineItemJsonPayload();
+    String url = format(ApiPath.LINE_ITEM_ADD, lineItem.getAdvertiserId());
+    Integer id = doPost(url, IdResponse.class, payload).getId();
+    lineItem.setId(id);
+  }
+  
+  public void addCampaign(Campaign campaign) {
+    String payload = campaign.getAddCampaignJsonPayload();
+    String url = format(ApiPath.CAMPAIGN_ADD, campaign.getAdvertiserId());
+    Integer id = doPost(url, IdResponse.class, payload).getId();
+    campaign.setId(id);
+  }
+  
+  public Campaign getCampaign(Integer campaignId, Integer advertiserId) {
+    String url = format(ApiPath.CAMPAIGN_GET, campaignId, advertiserId);
+    return doGet(url, CampaignResponse.class).getCampaign();
   }
   
   private <T extends Response> T doGet(String apiPath, Class<T> clazz) {
@@ -70,7 +97,8 @@ public class Api {
   }
   
   protected <T extends Response> T doPost(String apiPath, Map<String, String> headers, Class<T> clazz, String payload) {
-    T response = fromJson(httpClient.post(apiPath, headers, payload), clazz);
+    String result = httpClient.post(apiPath, headers, payload);    
+    T response = fromJson(result, clazz);
     try {
       checkResponseStatus(response);
     } catch (AppnexusAuthException e) {
@@ -88,7 +116,10 @@ public class Api {
       if ("NOAUTH".equalsIgnoreCase(response.getErrorId())) {
         throw new AppnexusAuthException(format("%s", response.getError()));
       }
-      throw new AppnexusException(format("Failed request [status: %s]", response.getStatus()));
+      
+      String msg = format("Failed request [status: %s, error: %s, error id: %s]",
+          response.getStatus(), response.getError(), response.getErrorId());
+      throw new AppnexusException(msg);
     }
   }
   
@@ -102,6 +133,9 @@ public class Api {
   }
   
   protected <T> T fromJson(String json, Class<T> clazz) {
+    if (isBlank(json)) {
+      throw new IllegalArgumentException("json is blank");
+    }
     return JsonUtils.fromJson(json, JSON_RESPONSE_ROOT, clazz);
   }
 

@@ -2,7 +2,11 @@ package appnexus.api;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 public class Response implements Serializable {
+
+  private static final String NOT_AVAILABLE = "N/A";
 
   private static final long serialVersionUID = 1L;
 
@@ -13,7 +17,7 @@ public class Response implements Serializable {
   private String errorId;
   
   public String getStatus() {
-    return status;
+    return StringUtils.isNotBlank(status) ? status : NOT_AVAILABLE;
   }
 
   public void setStatus(String status) {
@@ -21,7 +25,7 @@ public class Response implements Serializable {
   }
 
   public String getError() {
-    return error;
+    return StringUtils.isNotBlank(error) ? error : NOT_AVAILABLE;
   }
 
   public void setError(String error) {
@@ -29,7 +33,7 @@ public class Response implements Serializable {
   }
 
   public String getErrorId() {
-    return errorId;
+    return StringUtils.isNotBlank(errorId) ? errorId : NOT_AVAILABLE;
   }
 
   public void setErrorId(String errorId) {
