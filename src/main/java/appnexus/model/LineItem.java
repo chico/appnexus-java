@@ -11,7 +11,7 @@ public class LineItem implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
-  protected static final String ADD_LINE_ITEM_JSON_PAYLOAD = "{\"line-item\": {\"name\": \"%s\", \"advertiser_id\": %s, \"revenue_type\": \"%s\", \"revenue_value\": %s}}";
+  protected static final String JSON = "{\"line-item\": {\"name\": \"%s\", \"advertiser_id\": %s, \"revenue_type\": \"%s\", \"revenue_value\": %s}}";
   
   public interface RevenueType {
     // Do not track revenue for the line item.  
@@ -88,9 +88,9 @@ public class LineItem implements Serializable {
     this.revenueValue = revenueValue;
   }
 
-  public String getAddLineItemJsonPayload() {
+  public String toJson() {
     // TODO use gson
-    return format(ADD_LINE_ITEM_JSON_PAYLOAD, this.getName(), this.getAdvertiserId(), this.getRevenueType(), this.getRevenueValue());
+    return format(JSON, this.getName(), this.getAdvertiserId(), this.getRevenueType(), this.getRevenueValue());
   }
 
   @Override

@@ -62,7 +62,7 @@ public class ApiUnitTest {
   @Test
   public void testAddAdvertiser() {
     String url = ApiPath.ADVERTISER;
-    String payload = Fixtures.ADVERTISER.getAddAdvertiserJsonPayload();
+    String payload = Fixtures.ADVERTISER.toJson();
     when(mockHttpClient.post(url, authHeaders, payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.ADVERTISER.getId()));
     
     Advertiser advertiser = new Advertiser.Builder().name(Fixtures.ADVERTISER.getName()).state(Fixtures.ADVERTISER.getState()).build();
@@ -75,7 +75,7 @@ public class ApiUnitTest {
   @Test
   public void testAddLineItem() {
     String url = format(ApiPath.LINE_ITEM_ADD, Fixtures.LINE_ITEM.getAdvertiserId());
-    String payload = Fixtures.LINE_ITEM.getAddLineItemJsonPayload();
+    String payload = Fixtures.LINE_ITEM.toJson();
     when(mockHttpClient.post(url, authHeaders, payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.LINE_ITEM.getId()));
     
     LineItem lineItem = new LineItem.Builder()
@@ -93,7 +93,7 @@ public class ApiUnitTest {
   @Test
   public void testAddCampaign() {
     String url = format(ApiPath.CAMPAIGN_ADD, Fixtures.CAMPAIGN.getAdvertiserId());
-    String payload = Fixtures.CAMPAIGN.getAddCampaignJsonPayload();
+    String payload = Fixtures.CAMPAIGN.toJson();
     when(mockHttpClient.post(url, authHeaders, payload)).thenReturn(format(Fixtures.ID_RESPONSE, Fixtures.CAMPAIGN.getId()));
     
     Campaign campaign = new Campaign.Builder()

@@ -17,5 +17,5 @@ public class AppnexusUnitTest {
     Appnexus.environment = Appnexus.Environment.PRODUCTION;
     assertEquals(Appnexus.ApiBase.PRODUCTION, Appnexus.getApiBase());    
   }
-
+  
 }

@@ -11,7 +11,7 @@ public class Campaign implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
-  protected static final String ADD_CAMPAIGN_JSON_PAYLOAD = "{\"campaign\": {\"name\": \"%s\", \"state\": \"%s\", \"advertiser_id\": %d, \"line_item_id\": %d, \"inventory_type\": \"%s\"}}";
+  protected static final String JSON = "{\"campaign\": {\"name\": \"%s\", \"state\": \"%s\", \"advertiser_id\": %d, \"line_item_id\": %d, \"inventory_type\": \"%s\"}}";
   
   public interface State {
     public final static String ACTIVE = "active";
@@ -83,9 +83,9 @@ public class Campaign implements Serializable {
     this.inventoryType = inventoryType;
   }
   
-  public String getAddCampaignJsonPayload() {
+  public String toJson() {
     // TODO use gson
-    return format(ADD_CAMPAIGN_JSON_PAYLOAD, this.getName(), this.getState(), this.getAdvertiserId(), this.getLineItemId(), this.getInventoryType());
+    return format(JSON, this.getName(), this.getState(), this.getAdvertiserId(), this.getLineItemId(), this.getInventoryType());
   }
 
   @Override

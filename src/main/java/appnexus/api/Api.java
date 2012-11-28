@@ -43,20 +43,20 @@ public class Api {
   }
   
   public void addAdvertiser(Advertiser advertiser) {
-    String payload = advertiser.getAddAdvertiserJsonPayload();
+    String payload = advertiser.toJson();
     Integer id = helper.doPost(ApiPath.ADVERTISER, IdResponse.class, payload).getId();
     advertiser.setId(id);
   }
   
   public void addLineItem(LineItem lineItem) {
-    String payload = lineItem.getAddLineItemJsonPayload();
+    String payload = lineItem.toJson();
     String url = format(ApiPath.LINE_ITEM_ADD, lineItem.getAdvertiserId());
     Integer id = helper.doPost(url, IdResponse.class, payload).getId();
     lineItem.setId(id);
   }
   
   public void addCampaign(Campaign campaign) {
-    String payload = campaign.getAddCampaignJsonPayload();
+    String payload = campaign.toJson();
     String url = format(ApiPath.CAMPAIGN_ADD, campaign.getAdvertiserId());
     Integer id = helper.doPost(url, IdResponse.class, payload).getId();
     campaign.setId(id);

@@ -11,7 +11,7 @@ public class Advertiser implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
-  protected static final String ADD_ADVERTISER_JSON_PAYLOAD = "{\"advertiser\":{\"name\":\"%s\", \"state\":\"%s\"}}";
+  protected static final String JSON = "{\"advertiser\":{\"name\":\"%s\", \"state\":\"%s\"}}";
   
   public interface State {
     public final static String ACTIVE = "active";
@@ -48,9 +48,9 @@ public class Advertiser implements Serializable {
     this.state = state;
   }
   
-  public String getAddAdvertiserJsonPayload() {
+  public String toJson() {
     // TODO use gson
-    return format(ADD_ADVERTISER_JSON_PAYLOAD, this.getName(), this.getState());
+    return format(JSON, this.getName(), this.getState());
   }
 
   @Override
