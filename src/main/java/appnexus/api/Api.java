@@ -1,15 +1,20 @@
 package appnexus.api;
 
 import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import appnexus.AccountDetails;
-import appnexus.api.response.CampaignResponse;
 import appnexus.api.response.IdResponse;
-import appnexus.api.response.MemberResponse;
 import appnexus.http.HttpClient;
 import appnexus.model.Advertiser;
 import appnexus.model.Campaign;
 import appnexus.model.LineItem;
 import appnexus.model.Member;
+import appnexus.utils.BeanUtils;
+
+import com.google.gson.reflect.TypeToken;
 
 public class Api {
   
@@ -34,7 +39,7 @@ public class Api {
   }
   
   public Member getMember() {
-    return helper.doGet(ApiPath.MEMBER, MemberResponse.class).getMember();
+    return helper.doGet(ApiPath.MEMBER, Member.class);
   }
   
   public void addAdvertiser(Advertiser advertiser) {
@@ -59,7 +64,12 @@ public class Api {
   
   public Campaign getCampaign(Integer campaignId, Integer advertiserId) {
     String url = format(ApiPath.CAMPAIGN_GET, campaignId, advertiserId);
-    return helper.doGet(url, CampaignResponse.class).getCampaign();
+    return helper.doGet(url, Campaign.class);
   }
-
+  
+  public List<Campaign> getCampaigns(Integer advertiserId) {
+    String url = format(ApiPath.CAMPAIGNS, advertiserId);
+    return helper.doGet(url, BeanUtils.getPluralizedClassName(Campaign.class), new TypeToken<ArrayList<Campaign>>(){}.getType());
+  }
+  
 }

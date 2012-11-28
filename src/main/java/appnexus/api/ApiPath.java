@@ -19,5 +19,6 @@ public interface ApiPath {
   public static final String CAMPAIGN = format("%s/campaign", BASE);
   public static final String CAMPAIGN_ADD = CAMPAIGN + "?advertiser_id=%d";
   public static final String CAMPAIGN_GET = CAMPAIGN + "?id=%s&advertiser_id=%d";
+  public static final String CAMPAIGNS = CAMPAIGN + "?advertiser_id=%d";
 
 }

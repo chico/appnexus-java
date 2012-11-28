@@ -118,4 +118,14 @@ public class ApiUnitTest {
     verify(mockHttpClient, times(1)).get(url, authHeaders);
   }
   
+  @Test
+  public void testGetCampaigns() {
+    String url = format(ApiPath.CAMPAIGNS, Fixtures.CAMPAIGN.getAdvertiserId());
+    when(mockHttpClient.get(url, authHeaders)).thenReturn(Fixtures.CAMPAIGNS_RESPONSE);
+    
+    assertEquals(Fixtures.CAMPAIGNS, api.getCampaigns(Fixtures.CAMPAIGN.getAdvertiserId()));
+    
+    verify(mockHttpClient, times(1)).get(url, authHeaders);
+  }
+  
 }

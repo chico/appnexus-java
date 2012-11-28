@@ -33,15 +33,28 @@ public class JsonUtils {
   }
   
   public static <T> T fromJson(String json, String root, Class<T> classOfT) {
-    JsonElement jsonElement = fromJsonToElement(json, root);
+    JsonElement jsonElement = fromJsonToRootElement(json, root);
     return gson.fromJson(jsonElement, classOfT);
   }
-
-  public static <T> T fromJson(String json, String root, Type type) {
-    JsonElement jsonElement = fromJsonToElement(json, root);
-    return gson.fromJson(jsonElement, type);
+  
+  public static <T> T fromJson(JsonElement jsonElement, Class<T> classOfT) {
+    return gson.fromJson(jsonElement, classOfT);
   }
   
+  public static <T> T fromJson(JsonElement rootElement, String element, Class<T> classOfT) {
+    JsonElement jsonElement = rootElement.getAsJsonObject().get(element);
+    return gson.fromJson(jsonElement, classOfT);
+  }
+  
+  public static <T> T fromJson(String json, String root, String element, Type type) {
+    return fromJson(fromJsonToRootElement(json, root), element, type);
+  }
+  
+  public static <T> T fromJson(JsonElement rootElement, String element, Type type) {
+    JsonElement jsonElement = rootElement.getAsJsonObject().get(element);
+    return gson.fromJson(jsonElement, type);
+  }
+
   public static String toJson(Object src) {
     return gson.toJson(src);
   }
@@ -57,11 +70,11 @@ public class JsonUtils {
     return gson.fromJson(json, new TypeToken<Map<String, Object>>(){}.getType());    
   }
   
-  private static JsonElement fromJsonToElement(String json, String root) {
+  public static JsonElement fromJsonToRootElement(String json, String root) {
     if (StringUtils.isBlank(root)) {
       throw new IllegalArgumentException("root argument is mandatory; otherwise use fromJson(json, classOfT) instead");
     }
-    JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+    JsonObject jsonObject = parser.parse(json).getAsJsonObject();    
     JsonElement jsonElement = jsonObject.get(root);
     return jsonElement;
   }

@@ -4,6 +4,8 @@ import static java.lang.String.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -53,6 +55,12 @@ public class AppnexusTest {
     assertEquals(SANDBOX_ADVERTISER_ID, campaign.getAdvertiserId());
     assertEquals(SANDBOX_LINE_ITEM_ID, campaign.getLineItemId());
     assertNotNull(campaign.getName());
+  }
+  
+  @Test
+  public void testGetCampaigns() {
+    List<Campaign> campaigns = Appnexus.api.getCampaigns(SANDBOX_ADVERTISER_ID);
+    assertEquals(SANDBOX_CAMPAIGN_ID, campaigns.get(0).getId());
   }
   
   @Test

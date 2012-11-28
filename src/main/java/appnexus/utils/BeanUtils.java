@@ -29,6 +29,22 @@ import org.apache.commons.beanutils.ConvertUtilsBean;
  *  - include prefix of object being described by default (see includeRoot arg)
  */
 public class BeanUtils {
+  
+  public static String getClassName(Class<?> clazz) {
+    return underscoreAndLowercase(clazz.getSimpleName());
+  }
+  
+  public static String getClassName(Class<?> clazz, String separator) {
+    return separateAndLowercase(clazz.getSimpleName(), separator); 
+  }
+  
+  public static String getPluralizedClassName(Class<?> clazz) {
+    return BeanUtils.getClassName(clazz) + "s";
+  }
+  
+  public static String getPluralizedClassName(Class<?> clazz, String separator) {
+    return BeanUtils.getClassName(clazz, separator) + "s";
+  }
 
   public static Map<String, String> recursiveDescribe(Object object) {
     return recursiveDescribe(object, true);
@@ -38,7 +54,7 @@ public class BeanUtils {
     Set<Object> cache = new HashSet<Object>();
     return recursiveDescribe(object, null, includeRoot, cache);
   }
-
+  
   @SuppressWarnings("unchecked")
   private static Map<String, String> recursiveDescribe(Object object, String prefix, boolean includeRoot, Set<Object> cache) {
     if (object == null || cache.contains(object))
@@ -166,12 +182,16 @@ public class BeanUtils {
   
   // see http://stackoverflow.com/questions/2559759/how-do-i-convert-camelcase-into-human-readable-names-in-java
   private static String underscoreAndLowercase(String s) {
+    return separateAndLowercase(s, "_");
+  }
+  
+  private static String separateAndLowercase(String s, String separator) {
     return s.replaceAll(
         String.format("%s|%s",
            "(?<=[A-Z])(?=[A-Z][a-z])",
            "(?<=[^A-Z])(?=[A-Z])"
         ),
-        "_"
+        separator
      ).toLowerCase();
   }
   

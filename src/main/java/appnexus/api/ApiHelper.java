@@ -3,17 +3,20 @@ package appnexus.api;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 import appnexus.AccountDetails;
-import appnexus.api.ApiPath;
 import appnexus.api.response.AuthResponse;
 import appnexus.api.response.Response;
 import appnexus.exception.AppnexusAuthException;
 import appnexus.exception.AppnexusException;
 import appnexus.http.HttpClient;
+import appnexus.utils.BeanUtils;
 import appnexus.utils.JsonUtils;
+
+import com.google.gson.JsonElement;
 
 public class ApiHelper {
   
@@ -36,35 +39,35 @@ public class ApiHelper {
     this.accountDetails.setAccessToken(token);
   }
   
-  protected <T extends Response> T doGet(String apiPath, Class<T> clazz) {
-    T response = fromJson(httpClient.get(apiPath, headers()), clazz);
+  protected <T> T doGet(String apiPath, Class<T> clazz) {
     try {
-      checkResponseStatus(response);
+      return parseAndCheckResponseFromJson(httpClient.get(apiPath, headers()), clazz);
     } catch (AppnexusAuthException e) {
-      // Do auth and try one more time
-      auth();
-      response = fromJson(httpClient.get(apiPath, headers()), clazz);
-      checkResponseStatus(response);
+      // initial call was not authenticated, try one more time
+      return parseAndCheckResponseFromJson(httpClient.get(apiPath, headers()), clazz);
     }
-    return response;
+  }
+  
+  protected <T> T doGet(String apiPath, String element, Type type) {
+    try {
+      return parseAndCheckResponseFromJson(httpClient.get(apiPath, headers()), element, type);
+    } catch (AppnexusAuthException e) {
+      // initial call was not authenticated, try one more time
+      return parseAndCheckResponseFromJson(httpClient.get(apiPath, headers()), element, type);
+    }
   }
 
-  protected <T extends Response> T doPost(String apiPath, Class<T> clazz, String payload) {
+  protected <T> T doPost(String apiPath, Class<T> clazz, String payload) {
     return doPost(apiPath, headers(), clazz, payload);
   }
   
-  protected <T extends Response> T doPost(String apiPath, Map<String, String> headers, Class<T> clazz, String payload) {
-    String result = httpClient.post(apiPath, headers, payload);    
-    T response = fromJson(result, clazz);
+  protected <T> T doPost(String apiPath, Map<String, String> headers, Class<T> clazz, String payload) {    
     try {
-      checkResponseStatus(response);
+      return parseAndCheckResponseFromJson(httpClient.post(apiPath, headers, payload), clazz);
     } catch (AppnexusAuthException e) {
-      // Do auth and try one more time
-      auth();
-      response = fromJson(httpClient.post(apiPath, headers, payload), clazz);
-      checkResponseStatus(response);
+      // initial call was not authenticated, try one more time
+      return parseAndCheckResponseFromJson(httpClient.post(apiPath, headers, payload), clazz);
     }
-    return response;
   }
 
   protected void checkResponseStatus(Response response) {
@@ -89,11 +92,36 @@ public class ApiHelper {
     return headers;
   }
   
-  protected <T> T fromJson(String json, Class<T> clazz) {
+  protected <T> T parseAndCheckResponseFromJson(String json, Class<T> clazz) {
+    return parseAndCheckResponseFromJson(json, BeanUtils.getClassName(clazz), clazz);
+  }
+  
+  protected <T> T parseAndCheckResponseFromJson(String json, String element, Class<T> clazz) {
+    JsonElement rootElement = parseAndCheckResponseFromJson(json);
+    if (Response.class.isAssignableFrom(clazz)) {
+      return JsonUtils.fromJson(rootElement, clazz);
+    }
+    return JsonUtils.fromJson(rootElement, element, clazz);
+  }
+  
+  protected <T> T parseAndCheckResponseFromJson(String json, String element, Type type) {
+    JsonElement rootElement = parseAndCheckResponseFromJson(json);
+    return JsonUtils.fromJson(rootElement, element, type);
+  }
+
+  protected JsonElement parseAndCheckResponseFromJson(String json) {
     if (isBlank(json)) {
       throw new IllegalArgumentException("json is blank");
     }
-    return JsonUtils.fromJson(json, JSON_RESPONSE_ROOT, clazz);
+    JsonElement rootElement = JsonUtils.fromJsonToRootElement(json, JSON_RESPONSE_ROOT);
+    Response response = JsonUtils.fromJson(rootElement, Response.class);
+    try {
+      checkResponseStatus(response);
+    } catch (AppnexusAuthException e) {
+      auth();
+      throw e;
+    }
+    return rootElement;
   }
 
 }
